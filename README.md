@@ -10,6 +10,7 @@ Be careful about the usage of this code when the spin-down time is too short.
 Murase et al. 2019; Adiabatic loss of magnetic field in the PWN is implemented. Be careful how to set "timebin".
 See line ~410.
 
+---
 
 **input**
 <list of input parameters>
