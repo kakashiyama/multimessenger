@@ -7,34 +7,33 @@
 #include "../hdr/astro_const.h"
 #include "../hdr/multi_messengers.h"
 
+
+/* mode select */
 const int opacitymode=3; //0=iron, 1=Y_e~0.3-0.5, 2=Y_e~0.1-0.2, 3=CO
 const int diskwindmode=0; //0=no disk, 1=super-Edd disk, 2=disk wind
 const int timebinmode=5; //0=MKKB15, 1=M+19, 2=OKM18, 3=OKM18-coarse, 4=M+20 (ALMA), 5=Galactic magnetar
 const double tmax=51*86400;
 const double tobs=(51+1.5*365.2422)*86400;
 
-double gamma_b = 1.0e5; //can be 3*1e5
-double eps_mag,eps_e;
-double k_b_pwn;
-double Mdot_wind = 1.0e-6*M_SUN/(365.25*DAY_TO_SEC);
-double v_wind = 1.0e8;
-double n_env = 100.;
-double cs_csm = 1.0e7;
+
+/* implicit parameters */
+double gamma_b = 1.0e5; /* break Lorentz factor of electron injection spectrum */
+double eps_mag,eps_e; /* magnetic field and electron acceleration efficiency */
+double k_b_pwn; /* coefficient related to pdV work of PWN */
+double Mdot_wind = 1.0e-6*M_SUN/(365.25*DAY_TO_SEC); /* mass loss rate of the progenitor star [g/s] */
+double v_wind = 1.0e8; /* wind velocity of the progenito star [cm/s] */
+double n_env = 100.; /* CSM gas number density [1/cc] */
+double cs_csm = 1.0e7; /* CSM gas sound velocity [cm/s] */
 
 
 int main ()
 {
   struct _input in = load_inputfile();
-  char s_P0[99],s_Bp[99],s_Bt[99],s_mej[99];
-  snprintf(s_P0,99,"%12.1e",1.0e3*in.ome_0/(2.0*M_PI));
-  snprintf(s_Bp,99,"%12.1e",in.b_p);
-  snprintf(s_Bt,99,"%12.1e",in.b_t);
-  snprintf(s_mej,99,"%12.1e",in.m_ej/M_SUN);
-
-  lc_sn(in.m_ns,in.r_ns,in.b_t,in.b_p,in.ome_0,in.ene_sn,in.m_ej,in.m_Ni,in.m_rpe,in.r_0,in.delta,in.d_l,in.albd_fac,in.kappa,s_P0,s_Bp,s_Bt,s_mej);
+  lc_sn(in.m_ns,in.r_ns,in.b_t,in.b_p,in.ome_0,in.ene_sn,in.m_ej,in.m_Ni,in.m_rpe,in.r_0,in.delta,in.d_l,in.albd_fac,in.kappa);
   
   return 0;
 }
+
 
 struct _input load_inputfile()
 {
@@ -66,15 +65,18 @@ struct _input load_inputfile()
   return in;
 }
 
+
 double i_ns(double m_ns, double r_ns)
 {
     return 0.35*m_ns*pow(r_ns,2.0);
 }
 
+
 double ene_rot(double m_ns, double r_ns, double ome)
 {
     return 0.50*i_ns(m_ns,r_ns)*pow(ome,2.0);
 }
+
 
 double ene_b(double m_ns, double r_ns, double b_t)
 {
@@ -83,12 +85,14 @@ double ene_b(double m_ns, double r_ns, double b_t)
     return pow(b_t,2.0)/8.0/M_PI*vol_NS;
 }
 
+
 double eps_b(double m_ns, double r_ns, double b_t)
 {
     double ene_G = 3.0/4.0*G*pow(m_ns,2.0)/r_ns;
         
     return 15.0/4.0*ene_b(m_ns,r_ns,b_t)/ene_G;
 }
+
 
 double l_gw(double m_ns, double r_ns, double eps, double ome)
 {
@@ -99,6 +103,7 @@ double l_gw(double m_ns, double r_ns, double eps, double ome)
     
     return 2.0/5.0*G*pow(i_ns_tmp*eps,2.0)*pow(C,-5.0)*pow(ome,6.0)*sinalpha2*(1.0+15.0*sinalpha2);
 }
+
 
 double l_d(double r_ns, double b_p, double ome, double time)
 {
@@ -120,12 +125,14 @@ double l_d(double r_ns, double b_p, double ome, double time)
     
 }
 
+
 double vol_ej(double r_ej)
 {
     /* the volume of the ejecta */
     
     return 4.0*M_PI*pow(r_ej,3.0)/3.0;
 }
+
 
 double tau_ej(double m_ej, double delta, double r_ej, double kappa)
 {
@@ -139,14 +146,10 @@ double tau_ej(double m_ej, double delta, double r_ej, double kappa)
     //    return 1.0;
 }
 
+
 double rho_env(double r_ej)
 {
   /* ambient matter density [g/cc] */
-  //double Mdot_wind = 1.0e-6*M_SUN/(365.25*DAY_TO_SEC);
-  //double v_wind = 1.0e8;
-  //double n_env = 30.;
-  //double cs_csm = 1.0e7;
-
   double r_wind = sqrt(5.0*Mdot_wind*v_wind/24./M_PI/M_PRO/n_env/cs_csm/cs_csm);
 
   if (r_ej < r_wind) 
@@ -155,9 +158,8 @@ double rho_env(double r_ej)
     return 10.*M_PRO;
 }
 
-void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, double ene_sn, double m_ej, double m_Ni, double m_rpe, double r_0, double delta, double d_l, double albd_fac, double kappa,
-           char s_P0[], char s_Bp[], char s_Bt[], char s_mej[])
 
+void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, double ene_sn, double m_ej, double m_Ni, double m_rpe, double r_0, double delta, double d_l, double albd_fac, double kappa)
 {
     /* the condition for magnetically deformed rotation can occur (Eq. 19 of Dall'Osso+2009) */
     double ene_b_tmp = ene_b(m_ns,r_ns,b_t);
@@ -228,8 +230,7 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
     }else{
       eps_mag = 0.003;
     }
-    
-    
+        
     /* the initial condition */
     double ene_sd = 0.0;
     double ene_nb = 0.0;
@@ -275,13 +276,12 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
     double spec_non_thermal_gamma = 1.0;
     double f_gamma_esc_gamma = 1.0;
     
+
     /* timescales */
+    int i_max = 5000; /* resolution */
     double t_0 = r_0/v_ej;
     double t_f;
-    int i_max = 5000; /* resolution */
-    //previous
     if(timebinmode!=5){
-      //double t_f = 12.0e3*DAY_TO_SEC; /* in unit of [s] */ //注意
       t_f = 3.6525e5*DAY_TO_SEC; /* in unit of [s] */ //注意
     }else{
       t_f = 3.6525e6*DAY_TO_SEC; /* in unit of [s] */ //注意
@@ -311,15 +311,15 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
     double U_ab_max=U_ab,B_ab_max=B_ab,V_ab_max=V_ab,R_ab_max=R_ab;
     double dm_15_U=0.0,dm_15_B=0.0,dm_15_V=0.0,dm_15_R=0.0;
     double V_minus_R = V_ab-R_ab;
-    
+
     /* the bolometric non-thermal emission */
     double l_emi_psr = 0.0;
     double ene_emi_psr = 0.0;
-    
+
     /* the emission in the hard X-ray band (10-100 keV) */
     double l_emi_hardx = 0.0;
     double l_emi_hardx_max = 0.0;
-    
+
     /* the emission in the gamma-ray band (~GeV) */
     double l_emi_gamma = 0.0;
     double l_emi_gamma_max = 0.0;
@@ -327,7 +327,9 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
     /* the bolometric Ni, Co emission */
     double l_emi_Ni = ((1.0-fac_Ni_dep_tmp)*ene_Ni+(1.0-fac_Co_dep_tmp)*ene_Co)/t_dif_ej;
     double ene_emi_Ni = 0.0;
-        
+
+
+    /* for the output */
     FILE *op1,*op2,*op3;
     char file_name[128];
     char dat[] = ".dat";
@@ -339,6 +341,7 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
     for(j=0;j<j_max;j++){
         calctime[j]=initime*exp(timedeg*j*log(10.));
     }
+
 
     /* main loop for the time evolution */
     for (i=0;i<i_max;i++) {
@@ -379,7 +382,12 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
       }
       b_pwn = pow(u_b_pwn*8.0*M_PI,0.5); //be careful: epsilon_B=epsilon_B^pre/8/PI for epsilon_B^pre used in Murase et al. 2018
              
-      v_ej = pow(2.0*ene_kin/(m_ej+dm_ej),0.5);
+      v_ej = pow(2.0*ene_kin/(m_ej+dm_ej),0.5); //including the deceleartion effect
+      if(sqrt(7.0/6.0/(3.0-delta)*ene_nb/m_ej*pow(r_ej/r_w,3.0-delta))>pow((2*l_disk(t)*r_w/(3-delta)/m_ej),1./3.)){
+	v_w=(sqrt(7.0/6.0/(3.0-delta)*ene_nb/m_ej*pow(r_ej/r_w,3.0-delta))+r_w/t);//eps_magむし
+      }else{
+	v_w=pow((2*l_disk(t)*r_w/(3-delta)/m_ej),1./3.)+r_w/t;//eps_magむし
+      }
       vol_ej_tmp = vol_ej(r_ej);
       tau_ej_tmp = tau_ej(m_ej,delta,r_ej,kappa);
       t_dif_ej = tau_ej_tmp*r_ej/C;
@@ -389,39 +397,36 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
       t_dyn = r_ej/v_ej;
       T_ej = pow(ene_th/A_RAD/vol_ej_tmp,0.25);
       
-      fac_psr_dep_tmp = fac_psr_dep(m_ej,delta,r_ej,albd_fac,b_pwn,gamma_b,T_ej);
-      fac_Ni_dep_tmp = fac_Ni_dep(m_ej,delta,r_ej,albd_fac);
-      fac_Co_dep_tmp = fac_Co_dep(m_ej,delta,r_ej,albd_fac);
       
+      /* UV/optiacl/IR */
       l_emi_sn = ene_th/t_dif_ej;
       ab_AB_mag(l_emi_sn,T_ej,&U_ab,&B_ab,&V_ab,&R_ab,&I_ab);
       app_AB_mag(l_emi_sn,T_ej,d_l,&U_app,&B_app,&V_app,&R_app,&I_app);
-      //R_ab = ab_bol_mag(l_emi_sn);
-      
       if (R_ab < R_ab_max){
 	R_ab_max = R_ab;
 	t_R_ab_max = t;
       }
-      
       if (V_ab < V_ab_max){
 	V_ab_max = V_ab;
 	t_V_ab_max = t;
       }
-      
       if (U_ab < U_ab_max){
 	U_ab_max = U_ab;
 	t_U_ab_max = t;
       }
-      
       if (t-t_R_ab_max<15.0*DAY_TO_SEC){
 	dm_15_R = R_ab-R_ab_max;
       }
-
       if (t-t_V_ab_max<15.0*DAY_TO_SEC){
 	dm_15_V = V_ab-V_ab_max;
       }
-
       V_minus_R = V_ab-R_ab;
+      
+
+      /* Gamma-ray and X-ray */
+      fac_psr_dep_tmp = fac_psr_dep(m_ej,delta,r_ej,albd_fac,b_pwn,gamma_b,T_ej);
+      fac_Ni_dep_tmp = fac_Ni_dep(m_ej,delta,r_ej,albd_fac);
+      fac_Co_dep_tmp = fac_Co_dep(m_ej,delta,r_ej,albd_fac);
 
       spec_non_thermal_x = spec_non_thermal(e_hardx,b_pwn,gamma_b,T_ej);
       f_gamma_esc_x = f_gamma_esc(e_hardx,m_ej,delta,r_ej,albd_fac);
@@ -443,22 +448,10 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
 	t_gamma_max = t;
       }            
       
-      if(sqrt(7.0/6.0/(3.0-delta)*ene_nb/m_ej*pow(r_ej/r_w,3.0-delta))>pow((2*l_disk(t)*r_w/(3-delta)/m_ej),1./3.)){
-	v_w=(sqrt(7.0/6.0/(3.0-delta)*ene_nb/m_ej*pow(r_ej/r_w,3.0-delta))+r_w/t);//eps_magむし
-      }else{
-	v_w=pow((2*l_disk(t)*r_w/(3-delta)/m_ej),1./3.)+r_w/t;//eps_magむし
-      }
-      r_ej += v_ej*t*del_ln_t;
-      r_w += v_w*t*del_ln_t;
-      if (r_w > r_ej){
-	r_w = r_ej;
-      }
-      vol_w_tmp = vol_ej(r_w);
 
-      dm_ej += 4.0*M_PI*r_ej*r_ej*v_ej*t*del_ln_t*rho_env(r_ej);
-
-      //for(j=0;j<j_max;j++){
-      //if((t<=calctime[j])&&(calctime[j])<t*exp(del_ln_t)){
+      /* output */
+      for(j=0;j<j_max;j++){
+	if((t<=calctime[j])&&(calctime[j])<t*exp(del_ln_t)){
 	  fprintf(op1,"%12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e \n",
 		  t,ome,r_ej,v_ej,r_w,v_w,tau_ej_tmp,T_ej,b_pwn,ene_th,ene_b_pwn);
 	  fprintf(op2,"%12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e \n",
@@ -466,9 +459,19 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
 		  spec_non_thermal_x,f_gamma_esc_x,spec_non_thermal_gamma,f_gamma_esc_gamma);
 	  fprintf(op3,"%12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e %12.3e \n",
 		  t,U_ab,B_ab,V_ab,R_ab,I_ab,U_app,B_app,V_app,R_app,I_app,V_minus_R);
-	  //}
-	  //}
-
+	}
+      }
+      
+      
+      /* evolve radii and so on */
+      r_ej += v_ej*t*del_ln_t;
+      r_w += v_w*t*del_ln_t;
+      if (r_w > r_ej){
+	r_w = r_ej;
+      }
+      vol_w_tmp = vol_ej(r_w);
+      dm_ej += 4.0*M_PI*r_ej*r_ej*v_ej*t*del_ln_t*rho_env(r_ej);
+      
     }
     fclose(op1);
     fclose(op2);

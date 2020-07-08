@@ -29,8 +29,8 @@ double vol_ej(double r_ej);
 double tau_ej(double m_ej, double delta, double r_ej, double kappa);
 double rho_env(double r_ej);
 
-void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, double ene_sn, double m_ej, double m_Ni, double m_rpe, double r_0, double delta, double d_l, double albd_fac, double kappa,
-           char s_P0[], char s_Bp[], char s_Bt[], char s_mej[]);
+void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, double ene_sn, double m_ej, double m_Ni, double m_rpe, double r_0, double delta, double d_l, double albd_fac, double kappa);//,
+	   //           char s_P0[], char s_Bp[], char s_Bt[], char s_mej[]);
 
 double s_f_num(double f);
 
