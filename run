@@ -1,0 +1,7 @@
+#!/bin/bash
+cd src
+rm *.o
+echo ">> calculating multimessenger light curve"
+gcc multi_messengers_ver1_7_1.c -o multimessengers.o
+./multimessengers.o
+echo ">> Done"
