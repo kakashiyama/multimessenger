@@ -1,20 +1,18 @@
 **multi_messenters.c (ver.1.7.1)**
   
 Original ver. created by Kazumi Kashiyama on 13/11/27.
-
-Updated by Kohta Murase on 17/10/08 : Implementing disk mdoel
+Updated by Kohta Murase on 17/10/08.
 
 In this ver. the energy depoisiton rate from gamma rays to the thermal bath is modeled in more detailed.
 Note that albedo should change between magnetar and BH, epsilon_B can be 0.01 or 0.003 etc., note that one should change eps_e for BH or NS.
 Be careful about the usage of this code when the spin-down time is too short.
 
-Murase et al. 2019; Adiabatic loss of magnetic field in the PWN is implemented. Be careful how to set "timebin". 
-
-Updated by Kazumi Kashiyama on 20/07/08 : Implementing deceleration phase
+Murase et al. 2019; Adiabatic loss of magnetic field in the PWN is implemented. Be careful how to set "timebin".
+See line ~410.
 
 ---
 
-**in_para**
+**input**
 <list of input parameters>
 1. NS mass [MSUN]
 2. NS radius [cm]
