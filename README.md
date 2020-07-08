@@ -1,4 +1,4 @@
-*multi_messenters.c (ver.1.7.1)
+**multi_messenters.c (ver.1.7.1)
   
 Original ver. created by Kazumi Kashiyama on 13/11/27.
 Updated by Kohta Murase on 17/10/08.
@@ -11,7 +11,7 @@ Murase et al. 2019; Adiabatic loss of magnetic field in the PWN is implemented. 
 See line ~410.
 
 
-*input
+**input
 <list of input parameters>
 1. NS mass [MSUN]
 2. NS radius [cm]
