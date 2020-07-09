@@ -388,6 +388,12 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
       }else{
 	v_w=pow((2*l_disk(t)*r_w/(3-delta)/m_ej),1./3.)+r_w/t;//eps_magむし
       }
+      ////////////////////////
+      // v_w limitter (NEW) //
+      ////////////////////////
+      if (v_w > v_ej)
+	v_w = v_ej;
+      ////////////////////////
       vol_ej_tmp = vol_ej(r_ej);
       tau_ej_tmp = tau_ej(m_ej,delta,r_ej,kappa);
       t_dif_ej = tau_ej_tmp*r_ej/C;
@@ -1185,16 +1191,21 @@ double spec_non_thermal(double e_gamma, double b_pwn, double gamma_b, double T_e
         return 0.0;
     }
     else if(e_gamma_min > e_gamma_syn_b_tmp){
-      norm_fac = 1.0/log(e_gamma_max_tmp/e_gamma_syn_b_tmp)/e_gamma_syn_b_tmp;
+      //norm_fac = 1.0/log(e_gamma_max_tmp/e_gamma_syn_b_tmp)/e_gamma_syn_b_tmp;
+      norm_fac = 1.0/log(e_gamma_max_tmp/e_gamma_min)/e_gamma_min;
       if (e_gamma < e_gamma_max_tmp && e_gamma > e_gamma_min)
-	return norm_fac*pow(e_gamma/e_gamma_syn_b_tmp,-1);
+	//return norm_fac*pow(e_gamma/e_gamma_syn_b_tmp,-1);
+	return norm_fac*pow(e_gamma/e_gamma_min,-1);
       else
 	return 0.0;
     }
     else{
-      norm_fac = 1.0/((1.0/(2.0-p_1))*(1.0-pow(e_gamma_min/e_gamma_syn_b_tmp,2.0-p_1)))/e_gamma_syn_b_tmp;
-      if (e_gamma < e_gamma_syn_b_tmp && e_gamma >= e_gamma_min)
-        return norm_fac*pow(e_gamma/e_gamma_syn_b_tmp,-p_1+1.0);
+      //norm_fac = 1.0/((1.0/(2.0-p_1))*(1.0-pow(e_gamma_min/e_gamma_syn_b_tmp,2.0-p_1)))/e_gamma_syn_b_tmp;
+      norm_fac = 1.0/((1.0/(2.0-p_1))*(1.0-pow(e_gamma_min/e_gamma_max_tmp,2.0-p_1)))/e_gamma_max_tmp;
+      //if (e_gamma < e_gamma_syn_b_tmp && e_gamma >= e_gamma_min)
+      if (e_gamma < e_gamma_max_tmp && e_gamma >= e_gamma_min)
+        //return norm_fac*pow(e_gamma/e_gamma_syn_b_tmp,-p_1+1.0);
+	return norm_fac*pow(e_gamma/e_gamma_max_tmp,-p_1+1.0);
       else
         return 0.0;
     }

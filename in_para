@@ -4,11 +4,11 @@ B_t[G] 1.0e14
 B_p[G] 1.0e14
 P_0[ms] 3.0
 E_sn[erg] 1.0e51
-M_ej[Msun] 3.0
+M_ej[Msun] 5.0
 M_Ni[Msun] 0.1
 M_rpe[Msun] 0.0
 r_0[cm] 1.0e11
 delta 1.0
 albd_fac 0
-kappa[g/cm2] 0.1
-d_l[pc] 1.65e7
+kappa[g/cm2] 0.2
+d_l[pc] 10.0e3
