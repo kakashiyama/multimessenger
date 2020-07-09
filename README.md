@@ -16,13 +16,13 @@ Updated by Kazumi Kashiyama on 20/07/08 : Implementing deceleration phase
 
 ## in_para
 **list of input parameters**
-1. NS mass [MSUN]
+1. NS mass [Msun]
 2. NS radius [cm]
 3. NS toloidal magnetic field [G]
 4. NS poloidal magnetic field [G]
 5. NS initial spin period [ms]
 6. SN explosion energy [erg]
-7. SN ejecta mass [MSUN]
+7. SN ejecta mass [Msun]
 8. Ni mass [Msun]
 9. Rprocess-element mass [Msun]
 10. SN explosion inital radius [cm] 
