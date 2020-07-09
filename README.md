@@ -1,4 +1,4 @@
-**multi_messenters.c (ver.1.7.1)**
+# multi_messenters.c (ver.1.7.1)
   
 Original ver. created by Kazumi Kashiyama on 13/11/27.
 
