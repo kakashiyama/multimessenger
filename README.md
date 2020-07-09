@@ -14,8 +14,8 @@ Updated by Kazumi Kashiyama on 20/07/08 : Implementing deceleration phase
 
 ---
 
-**in_para**
-<list of input parameters>
+## in_para
+**list of input parameters**
 1. NS mass [MSUN]
 2. NS radius [cm]
 3. NS toloidal magnetic field [G]
