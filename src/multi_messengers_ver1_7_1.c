@@ -9,9 +9,9 @@
 
 
 /* mode select */
-const int opacitymode=3; //0=iron, 1=Y_e~0.3-0.5, 2=Y_e~0.1-0.2, 3=CO
+const int opacitymode=0; //0=iron, 1=Y_e~0.3-0.5, 2=Y_e~0.1-0.2, 3=CO
 const int diskwindmode=0; //0=no disk, 1=super-Edd disk, 2=disk wind
-const int timebinmode=5; //0=MKKB15, 1=M+19, 2=OKM18, 3=OKM18-coarse, 4=M+20 (ALMA), 5=Galactic magnetar
+const int timebinmode=6; //0=MKKB15, 1=M+19, 2=OKM18, 3=OKM18-coarse, 4=M+20 (ALMA), 5=Galactic magnetar, 6=AIC
 const double tmax=51*86400;
 const double tobs=(51+1.5*365.2422)*86400;
 
@@ -21,8 +21,8 @@ double gamma_b = 1.0e5; /* break Lorentz factor of electron injection spectrum *
 double eps_mag,eps_e; /* magnetic field and electron acceleration efficiency */
 double k_b_pwn; /* coefficient related to pdV work of PWN */
 double Mdot_wind = 1.0e-6*M_SUN/(365.25*DAY_TO_SEC); /* mass loss rate of the progenitor star [g/s] */
-double v_wind = 1.0e8; /* wind velocity of the progenito star [cm/s] */
-double n_env = 100.; /* CSM gas number density [1/cc] */
+double v_wind = 1.0e9; /* wind velocity of the progenito star [cm/s] */
+double n_env = 1.; /* CSM gas number density [1/cc] */
 double cs_csm = 1.0e7; /* CSM gas sound velocity [cm/s] */
 
 
@@ -214,8 +214,11 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
       j_max = 81;
       initime=exp(4.0*log(10.));
       timedeg=0.1;
+    }else if(timebinmode==6){
+      j_max = 81;
+      initime=exp(1.0*log(10.));
+      timedeg=0.1;
     }
-    
     
     if(diskwindmode==2){
       gamma_b=1.; //windのminimum injection
@@ -276,15 +279,15 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
     double spec_non_thermal_gamma = 1.0;
     double f_gamma_esc_gamma = 1.0;
     
-
+    
     /* timescales */
     int i_max = 5000; /* resolution */
     double t_0 = r_0/v_ej;
     double t_f;
     if(timebinmode!=5){
-      t_f = 3.6525e5*DAY_TO_SEC; /* in unit of [s] */ //注意
+      t_f = 3.6525e2*DAY_TO_SEC; /* in unit of [s] */ //注意
     }else{
-      t_f = 3.6525e6*DAY_TO_SEC; /* in unit of [s] */ //注意
+      t_f = 3.6525e2*DAY_TO_SEC; /* in unit of [s] */ //注意
     }
     double t = t_0;
     double del_ln_t = (log(t_f)-log(t_0))/(double)(i_max-1.0);
@@ -336,13 +339,12 @@ void lc_sn(double m_ns, double r_ns, double b_t, double b_p, double ome_0, doubl
     op1 = fopen("../op/hydro.dat","w+");
     op2 = fopen("../op/lc.dat","w+");
     op3 = fopen("../op/optical.dat","w+");
-
+    
     double calctime[j_max];
     for(j=0;j<j_max;j++){
         calctime[j]=initime*exp(timedeg*j*log(10.));
     }
-
-
+    
     /* main loop for the time evolution */
     for (i=0;i<i_max;i++) {
       ome += ome*del_ln_ome;
@@ -772,6 +774,7 @@ double kappa_bf(double e_gamma, double Z_eff)
     double ironopacity,seleopacity,xenonopacity,goldopacity;
     
     double A0,A1,A2,A3,A4;
+    
     //iron
     if(log10(e_gamma/EV_TO_ERG/1.0e6)<-2.14801){
         A0 = -3.95919414261072;
@@ -784,6 +787,7 @@ double kappa_bf(double e_gamma, double Z_eff)
         A1 = -0.206813265289848;
     }
     ironopacity=zeta*pow(10.,A0+A1*log10(e_gamma/EV_TO_ERG/1.0e6));
+    
     //selenium
     if(log10(e_gamma/EV_TO_ERG/1.0e6)<-2.84291){
         A0 = -3.78835348616654;
@@ -799,6 +803,7 @@ double kappa_bf(double e_gamma, double Z_eff)
         A1 = -0.102384218895718;
     }
     seleopacity=zeta*pow(10.,A0+A1*log10(e_gamma/EV_TO_ERG/1.0e6));
+    
     //xenon
     if(log10(e_gamma/EV_TO_ERG/1.0e6)<-2.32037){
         A0 = -3.07458863553159;
@@ -814,6 +819,7 @@ double kappa_bf(double e_gamma, double Z_eff)
         A1 = -0.0467127630289143;
     }
     xenonopacity=zeta*pow(10.,A0+A1*log10(e_gamma/EV_TO_ERG/1.0e6));
+    
     //gold
     if(log10(e_gamma/EV_TO_ERG/1.0e6)<-2.65645){
         A0 = -2.5113444206149;
